@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vino Bingo - Withdraw</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="telegram:viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        :root {
+            --primary: #4CAF50;
+            --secondary: #2196F3;
+            --accent: #FFD700;
+            --dark: #0f1a2a;
+            --light: #f8f9fa;
+            --background: #1a2a3a;
+            --danger: #f44336;
+            --telebirr: #20C997;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: var(--background);
+            color: var(--light);
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        .back-btn:active { transform: scale(0.95); }
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .info-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-card ul { padding-left: 20px; }
+        .info-card li { margin-bottom: 8px; font-size: 0.95rem; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--light);
+            font-size: 1rem;
+        }
+        .form-group input:focus { outline: none; border-color: var(--primary); }
+        .min-amount { font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 5px; }
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .submit-btn:active { transform: scale(0.98); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='index.html'">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+    <div class="info-card">
+        <h3><i class="fas fa-info-circle"></i> Withdrawal Rules</h3>
+        <ul>
+            <li>Minimum withdrawal: 100 Birr</li>
+            <li>Processed within 24 hours</li>
+            <li>Telebirr only</li>
+            <li>No withdrawal fees</li>
+        </ul>
+    </div>
+    <div class="form-group">
+        <label for="withdrawNumber">Telebirr Number</label>
+        <input type="tel" id="withdrawNumber" placeholder="900000000" pattern="[0-9]{9,}">
+    </div>
+    <div class="form-group">
+        <label for="withdrawAmount">Withdrawal Amount (Birr)</label>
+        <input type="number" id="withdrawAmount" min="100" step="1" placeholder="100">
+        <div class="min-amount">Minimum withdrawal: 100 Birr</div>
+    </div>
+    <button class="submit-btn" onclick="submitWithdrawal()">
+        <i class="fas fa-wallet"></i> Withdraw
+    </button>
+    <script>
+        async function submitWithdrawal() {
+            const number = document.getElementById('withdrawNumber').value;
+            const amount = document.getElementById('withdrawAmount').value;
+            if(!number.match(/^[0-9]{9,}$/)) {
+                alert("Please enter a valid Telebirr number (at least 9 digits)");
+                return;
+            }
+            if(amount < 100) {
+                alert("Minimum withdrawal is 100 Birr");
+                return;
+            }
+            try {
+                const telegramId = localStorage.getItem('telegramId') || Math.floor(Math.random()*1e8).toString();
+                localStorage.setItem('telegramId', telegramId);
+                const res = await fetch("https://vinobingo-backend.onrender.com/api/withdrawals", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ telegramId, amount, number })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Withdrawal request submitted! You will receive your money within 24 hours.");
+                    window.location.href = 'profile.html?withdrawSuccess=true&amount=' + amount;
+                } else {
+                    alert("Error: " + (data.error || "Withdrawal failed"));
+                }
+            } catch (e) {
+                alert("Network error. Please try again later.");
+            }
+        }
+        // Telegram WebApp setup
+        if (window.Telegram && Telegram.WebApp) {
+            Telegram.WebApp.expand();
+            Telegram.WebApp.enableClosingConfirmation();
+        }
+    </script>
+</body>
+</html>

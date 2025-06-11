@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vino Bingo - Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="telegram:viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        :root {
+            --primary: #4CAF50;
+            --secondary: #2196F3;
+            --accent: #FFD700;
+            --dark: #0f1a2a;
+            --light: #f8f9fa;
+            --background: #1a2a3a;
+            --danger: #f44336;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: var(--background);
+            color: var(--light);
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        .back-btn:active { transform: scale(0.95); }
+        .profile-container { animation: fadeIn 0.8s ease; }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .profile-pic {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .profile-info { flex: 1; }
+        .profile-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .edit-name {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .profile-phone {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+        }
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: pulseGlow 3s infinite;
+        }
+        .balance-label {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+        .balance-amount {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        .deposit-btn {
+            background: white;
+            color: var(--primary);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .deposit-btn:active { transform: scale(0.98); }
+        .settings-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .settings-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .setting-item:last-child { border-bottom: none; }
+        .setting-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(26px); }
+        .history-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .history-title {
+            font-size: 1.1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .history-filter {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 8px;
+            color: var(--light);
+        }
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .history-table th {
+            text-align: left;
+            padding: 8px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .history-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+        .history-table tr:last-child td { border-bottom: none; }
+        .won { color: var(--primary); font-weight: 600; }
+        .lost { color: var(--danger); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulseGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-height: 600px) {
+            .profile-pic { width: 60px; height: 60px; font-size: 1.5rem; }
+            .balance-amount { font-size: 1.8rem; }
+        }
+        
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='index.html'">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-pic" id="profileInitial">E</div>
+            <div class="profile-info">
+                <div class="profile-name">
+                    <span id="userName">Ermias Lemma</span>
+                    <i class="fas fa-pencil-alt edit-name" onclick="editName()"></i>
+                </div>
+                <div class="profile-phone" id="userPhone">+251912345678</div>
+            </div>
+        </div>
+        <div class="balance-card">
+            <div class="balance-label">Current Balance</div>
+            <div class="balance-amount">245 Birr</div>
+            <<a href="deposit.html" class="deposit-btn">
+                <i class="fas fa-plus"></i> Deposit
+            </a>
+            
+        </div>
+        <div class="settings-card">
+            <div class="settings-title">
+                <i class="fas fa-cog"></i> Settings
+            </div>
+            <div class="setting-item">
+                <div class="setting-label">
+                    <i class="fas fa-eye"></i>
+                    <span>Show my name in winner announcements</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="showNameToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div class="setting-label">
+                    <i class="fas fa-bell"></i>
+                    <span>Game notifications</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="notificationsToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        <div class="history-section">
+            <div class="history-header">
+                <div class="history-title">
+                    <i class="fas fa-history"></i> Recent Games
+                </div>
+                <select class="history-filter" id="historyFilter" onchange="filterHistory()">
+                    <option value="all">All Games</option>
+                    <option value="won">Wins Only</option>
+                    <option value="lost">Losses Only</option>
+                </select>
+            </div>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Game</th>
+                        <th>Result</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTable">
+                    <!-- Game history will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        // Sample user data
+        const user = {
+            name: "Ermias Lemma",
+            phone: "+2519" + Math.floor(Math.random() * 10000000).toString().padStart(7, '0'),
+            balance: 245,
+            history: [
+                { date: "2023-05-15", game: "10 Birr", result: "Won", amount: "+90" },
+                { date: "2023-05-14", game: "5 Birr", result: "Lost", amount: "-5" },
+                { date: "2023-05-13", game: "25 Birr", result: "Won", amount: "+225" },
+                { date: "2023-05-12", game: "5 Birr", result: "Lost", amount: "-5" },
+                { date: "2023-05-10", game: "10 Birr", result: "Lost", amount: "-10" }
+            ]
+        };
+
+        // Initialize profile
+        function initProfile() {
+            document.getElementById('profileInitial').textContent = user.name.charAt(0);
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userPhone').textContent = user.phone;
+            document.querySelector('.balance-amount').textContent = user.balance + " Birr";
+
+            // Load toggle states from localStorage
+            const showNameToggle = document.getElementById('showNameToggle');
+            const notificationsToggle = document.getElementById('notificationsToggle');
+
+            showNameToggle.checked = localStorage.getItem('showName') !== 'false';
+            notificationsToggle.checked = localStorage.getItem('notifications') !== 'false';
+
+            // Save toggle states
+            showNameToggle.addEventListener('change', () => {
+                localStorage.setItem('showName', showNameToggle.checked);
+                // In a real app, send this preference to the server
+            });
+
+            notificationsToggle.addEventListener('change', () => {
+                localStorage.setItem('notifications', notificationsToggle.checked);
+                // In a real app, send this preference to the server
+            });
+
+            // Check for deposit success
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('depositSuccess') === 'true') {
+                alert("Deposit successful! Your balance has been updated.");
+                user.balance += parseInt(urlParams.get('amount')) || 0;
+                document.querySelector('.balance-amount').textContent = user.balance + " Birr";
+            }
+
+            populateHistory();
+
+            // Make deposit button work
+            document.getElementById('depositBtn').onclick = function() {
+                window.location.href = 'deposit.html';
+            };
+        }
+
+        // Populate history table
+        function populateHistory(filter = 'all') {
+            const historyTable = document.getElementById('historyTable');
+            historyTable.innerHTML = '';
+
+            user.history.forEach(game => {
+                if (filter === 'all' ||
+                   (filter === 'won' && game.result === "Won") ||
+                   (filter === 'lost' && game.result === "Lost")) {
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${game.date}</td>
+                        <td>${game.game}</td>
+                        <td class="${game.result.toLowerCase()}">${game.result}</td>
+                        <td class="${game.result.toLowerCase()}">${game.amount} Birr</td>
+                    `;
+                    historyTable.appendChild(row);
+                }
+            });
+        }
+
+        // Filter history
+        function filterHistory() {
+            const filter = document.getElementById('historyFilter').value;
+            populateHistory(filter);
+        }
+
+        // Edit name
+        function editName() {
+            const currentName = document.getElementById('userName').textContent;
+            const newName = prompt("Enter your new name:", currentName);
+
+            if (newName && newName.trim() !== "") {
+                user.name = newName.trim();
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('profileInitial').textContent = user.name.charAt(0).toUpperCase();
+
+                // In a real app, save to server
+                if ('vibrate' in navigator) navigator.vibrate(100);
+            }
+        }
+
+        // Telegram WebApp setup
+        if (window.Telegram && Telegram.WebApp) {
+            Telegram.WebApp.expand();
+
+            // Get user data from Telegram
+            const tgUser = Telegram.WebApp.initDataUnsafe.user;
+            if (tgUser) {
+                user.name = tgUser.first_name || "User";
+                if (tgUser.last_name) user.name += " " + tgUser.last_name;
+                user.phone = tgUser.phone_number || user.phone;
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initProfile);
+    </script>
+</body>
+</html>
