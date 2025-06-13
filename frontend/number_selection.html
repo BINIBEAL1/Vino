@@ -462,7 +462,7 @@
                     G: bingoCardCache[selectedNumber].numbers.map(row => row[3]),
                     O: bingoCardCache[selectedNumber].numbers.map(row => row[4])
                 };
-                window.location.href = `bingo_game.html?amount=${gameAmount}&number=${selectedNumber}&gameId=${gameId}&numbers=${encodeURIComponent(JSON.stringify(bingoNumbers))}&timeLeft=${timeLeft}&players=${playerCount}`;
+                window.location.href = `bingo.html?amount=${gameAmount}&number=${selectedNumber}&gameId=${gameId}&numbers=${encodeURIComponent(JSON.stringify(bingoNumbers))}&timeLeft=${timeLeft}&players=${playerCount}`;
             }
         }
     </script>
