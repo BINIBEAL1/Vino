@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Age Verification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body.age-check {
+      background: #1a2a3a;
+      color: #FFD700;
+      font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    text-align: center;
+    padding: 20px;
+    animation: fadeOut 5s forwards;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #4CAF50, #2196F3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.logo span {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.message {
+    font-size: 1.5rem;
+    margin: 15px 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+@keyframes fadeOut {
+    0%, 80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+</style>
+</head>
+<body class="age-check">
+    <div class="logo">
+        <span>VB</span>
+    </div>
+    <div class="message">Welcome to Vino Bingo!</div>
+    <div class="message">This game is for players 18+ years old</div>
+    
+    <script src="js/script.js"></script>
+</body>
+</html>
