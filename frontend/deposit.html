@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vino Bingo - Deposit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="telegram:viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        
+        :root {
+            --primary: #4CAF50;
+            --secondary: #2196F3;
+            --accent: #FFD700;
+            --dark: #0f1a2a;
+            --light: #f8f9fa;
+            --background: #1a2a3a;
+            --danger: #f44336;
+            --telebirr: #20C997;
+            --cbe: #0056B3;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: var(--background);
+            color: var(--light);
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        .back-btn:active { transform: scale(0.95); }
+        .deposit-container { animation: fadeInUp 0.8s ease; }
+        .deposit-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .deposit-header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+        .deposit-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        .payment-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .payment-tab {
+            padding: 12px 15px;
+            cursor: pointer;
+            position: relative;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+        .payment-tab.active { color: var(--accent); }
+        .payment-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 3px 3px 0 0;
+        }
+        .payment-content { display: none; animation: fadeIn 0.5s ease; }
+        .payment-content.active { display: block; }
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .info-card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .account-info {
+            background: rgba(0, 100, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 100, 255, 0.2);
+        }
+        .account-info h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        .account-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--light);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            word-break: break-all;
+        }
+        .copy-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .copy-btn:active { transform: scale(0.98); }
+        .copy-btn.telebirr { background: var(--telebirr); }
+        .copy-btn.cbe { background: var(--cbe); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--light);
+            font-size: 1rem;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .min-amount { font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 5px; }
+        .warning-box {
+            background: rgba(244, 67, 54, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .warning-icon { color: var(--danger); font-size: 1.2rem; }
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .submit-btn:active { transform: scale(0.98); }
+        .service-message {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        .service-message p {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            color: var(--light);
+            line-height: 1.5;
+        }
+        .service-message-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .service-message-btn:active { transform: scale(0.98); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='index.html'" aria-label="Back">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+    <div class="deposit-container">
+        <div class="deposit-header">
+            <h1>Deposit Funds</h1>
+            <p>Choose your preferred payment method</p>
+        </div>
+        <div class="payment-tabs">
+            <div class="payment-tab active" onclick="openTab('telebirr', event)">
+                <i class="fas fa-mobile-alt"></i> Telebirr
+            </div>
+            <div class="payment-tab" onclick="openTab('bank', event)">
+                <i class="fas fa-university"></i> Bank
+            </div>
+        </div>
+        <!-- Telebirr Deposit -->
+        <div id="telebirr" class="payment-content active">
+            <div class="info-card">
+                <h2><i class="fas fa-mobile-alt"></i> How to deposit via Telebirr:</h2>
+                <ol style="padding-left: 20px; margin-top: 10px;">
+                    <li style="margin-bottom: 8px;">Open your Telebirr app</li>
+                    <li style="margin-bottom: 8px;">Select <strong>"Send Money"</strong></li>
+                    <li style="margin-bottom: 8px;">Enter our account number below</li>
+                    <li style="margin-bottom: 8px;">Enter the deposit amount (min. 50 Birr)</li>
+                    <li>Complete the transaction</li>
+                </ol>
+            </div>
+            <div class="account-info">
+                <h3><i class="fas fa-user-circle"></i> Our Telebirr Account:</h3>
+                <div class="account-number" id="telebirrAccount">+251900112233</div>
+                <button class="copy-btn telebirr" onclick="copyToClipboard('telebirrAccount')">
+                    <i class="fas fa-copy"></i> Copy Number
+                </button>
+            </div>
+            <div class="warning-box">
+                <div class="warning-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div>
+                    <strong>Important:</strong> Include your username in the transaction note. Deposits take 1-5 minutes to process.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="userTelebirrNumber">Your Telebirr Number</label>
+                <input type="tel" id="userTelebirrNumber" placeholder="900000000" pattern="[0-9]{10}">
+                <div class="min-amount">Enter the number you'll use to send money</div>
+            </div>
+            <div class="form-group">
+                <label for="telebirrAmount">Deposit Amount (Birr)</label>
+                <input type="number" id="telebirrAmount" min="50" step="1" placeholder="50">
+                <div class="min-amount">Minimum deposit: 50 Birr</div>
+            </div>
+            <button class="submit-btn" onclick="submitDeposit('telebirr')">
+                <i class="fas fa-check-circle"></i> Confirm Telebirr Deposit
+            </button>
+        </div>
+        <!-- Bank Deposit -->
+        <div id="bank" class="payment-content">
+            <div class="service-message" id="bankServiceMessage" style="display: none;">
+                <p><i class="fas fa-info-circle" style="color: var(--accent);"></i> Bank deposit service will be available soon. Please use Telebirr for now.</p>
+                <button class="service-message-btn" onclick="document.getElementById('bankServiceMessage').style.display = 'none'">OK</button>
+            </div>
+            <div class="info-card">
+                <h2><i class="fas fa-university"></i> How to deposit via Bank:</h2>
+                <ol style="padding-left: 20px; margin-top: 10px;">
+                    <li style="margin-bottom: 8px;">Use CBE, Dashen, or Awash Bank</li>
+                    <li style="margin-bottom: 8px;">Transfer to our account below</li>
+                    <li style="margin-bottom: 8px;">Include your username in the reference</li>
+                    <li>Email receipt to support@vinobingo.com</li>
+                </ol>
+            </div>
+            <div class="account-info">
+                <h3><i class="fas fa-university"></i> CBE Account Details:</h3>
+                <div class="account-number" id="bankAccount">10002589463215 (Vino Bingo)</div>
+                <button class="copy-btn cbe" onclick="copyToClipboard('bankAccount')">
+                    <i class="fas fa-copy"></i> Copy Account
+                </button>
+            </div>
+            <div class="form-group">
+                <label for="bankAmount">Deposit Amount (Birr)</label>
+                <input type="number" id="bankAmount" min="100" step="1" placeholder="100">
+                <div class="min-amount">Minimum deposit: 100 Birr</div>
+            </div>
+            <div class="form-group">
+                <label for="bankName">Bank Name</label>
+                <select id="bankName">
+                    <option value="cbe">Commercial Bank of Ethiopia</option>
+                    <option value="dashen">Dashen Bank</option>
+                    <option value="awash">Awash Bank</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="transactionId">Transaction ID/Reference</label>
+                <input type="text" id="transactionId" placeholder="e.g. CBE123456">
+            </div>
+            <button class="submit-btn" onclick="submitDeposit('bank')">
+                <i class="fas fa-check-circle"></i> Confirm Bank Deposit
+            </button>
+        </div>
+    </div>
+    <script>
+        // Switch between payment tabs
+        function openTab(tabName, event) {
+            document.querySelectorAll('.payment-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.payment-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+            if (tabName === 'bank') document.getElementById('bankServiceMessage').style.display = 'block';
+            if ('vibrate' in navigator) navigator.vibrate(30);
+        }
+        // Copy account number to clipboard
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Copied to clipboard: " + text);
+                if ('vibrate' in navigator) navigator.vibrate(100);
+            });
+        }
+        // Submit deposit
+        async function submitDeposit(type) {
+            let amount, message;
+            if (type === 'telebirr') {
+                const userNumber = document.getElementById('userTelebirrNumber').value;
+                if (!userNumber.match(/^[0-9]{9,}$/)) {
+                    alert("Please enter a valid Telebirr number (at least 9 digits)");
+                    return;
+                }
+                amount = document.getElementById('telebirrAmount').value;
+                if (!amount || amount < 50) {
+                    alert("Minimum Telebirr deposit is 50 Birr");
+                    return;
+                }
+                // Backend API call
+                try {
+                    const telegramId = localStorage.getItem('telegramId') || Math.floor(Math.random()*1e8).toString();
+                    localStorage.setItem('telegramId', telegramId);
+                    const res = await fetch("https://vinobingo-backend.onrender.com/api/deposits", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ telegramId, type: "telebirr", amount, userNumber })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert("Telebirr deposit submitted! Pending approval.");
+                        window.location.href = "profile.html?depositSuccess=true&amount=" + amount;
+                    } else {
+                        alert("Error: " + (data.error || "Deposit failed"));
+                    }
+                } catch(e) {
+                    alert("Network error. Please try again later.");
+                }
+            } else {
+                amount = document.getElementById('bankAmount').value;
+                if (!amount || amount < 100) {
+                    alert("Minimum bank deposit is 100 Birr");
+                    return;
+                }
+                const bank = document.getElementById('bankName').value;
+                const transactionId = document.getElementById('transactionId').value;
+                try {
+                    const telegramId = localStorage.getItem('telegramId') || Math.floor(Math.random()*1e8).toString();
+                    localStorage.setItem('telegramId', telegramId);
+                    const res = await fetch("https://vinobingo-backend.onrender.com/api/deposits", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ telegramId, type: "bank", amount, bank, transactionId })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert("Bank deposit submitted! Pending approval.");
+                        window.location.href = "profile.html?depositSuccess=true&amount=" + amount;
+                    } else {
+                        alert("Error: " + (data.error || "Deposit failed"));
+                    }
+                } catch (e) {
+                    alert("Network error. Please try again later.");
+                }
+            }
+        }
+        // Telegram WebApp setup
+        if (window.Telegram && Telegram.WebApp) {
+            Telegram.WebApp.expand();
+            Telegram.WebApp.enableClosingConfirmation();
+        }
+    </script>
+</body>
+</html>
